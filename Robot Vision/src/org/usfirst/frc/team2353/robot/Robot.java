@@ -7,8 +7,11 @@
 
 package org.usfirst.frc.team2353.robot;
 
+import org.usfirst.frc.team2353.robot.subsystems.Arduino;
+import org.usfirst.frc.team2353.robot.subsystems.BallTrack;
 import org.usfirst.frc.team2353.robot.subsystems.CameraLeftRight;
 import org.usfirst.frc.team2353.robot.subsystems.CameraUpDown;
+import org.usfirst.frc.team2353.robot.subsystems.Ultrasonic;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -27,6 +30,13 @@ public class Robot extends TimedRobot {
 	public static OI m_oi;
 	public static CameraLeftRight cameraLeftRight;
 	public static CameraUpDown cameraUpDown;
+	public static Ultrasonic ultrasonic;
+	public static Arduino arduino;
+	public static BallTrack ballTrack;
+	
+	boolean arduinoPluggedIn = false;
+	
+	boolean pixyTrack = false;
 
 	Command m_autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -38,8 +48,25 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		m_oi = new OI();
-		cameraLeftRight = new CameraLeftRight();
-		cameraUpDown = new CameraUpDown();
+		
+		if(arduinoPluggedIn) {
+			new Thread(new Runnable() {
+	    	     public void run() {
+	    	    	 arduino = new Arduino();
+	    	     }
+	    	}).start();
+		}
+		
+		if(pixyTrack) {
+			if(arduinoPluggedIn) {
+				ballTrack = new BallTrack();
+			}
+		}
+		else {
+			cameraLeftRight = new CameraLeftRight();
+			cameraUpDown = new CameraUpDown();
+		}
+		
 		//m_chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);

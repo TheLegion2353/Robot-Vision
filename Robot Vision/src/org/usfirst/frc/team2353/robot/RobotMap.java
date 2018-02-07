@@ -26,5 +26,5 @@ public class RobotMap {
 	
 	public static int xboxPort = 0;
 	
-	public static int servoLR = 2, servoUPDOWN = 3;
+	public static int servoLR = 3, servoUPDOWN = 2;
 }
