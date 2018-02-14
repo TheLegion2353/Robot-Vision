@@ -1,46 +1,44 @@
 package org.usfirst.frc.team2353.robot;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Timer;
 
 public class ArduinoRead {
 	static SerialPort serialPort;
 	int BaudRate = 9600;
 	int databits = 8;
 	
-	int distance = -1;
+	int pixyY = -1;
 	int pixyX = -1;
+	
+	Timer timer;
 	
 	//Initialize the serial port. To connect the Arduino, just plug the USB into the RoboRio USB port. Make sure the Arduino is on the same baud rate. 
 	public ArduinoRead() {
 		serialPort = new SerialPort(BaudRate, SerialPort.Port.kUSB, databits);
+		timer = new Timer();
 	}
 	
-	public int getUltrasonicSerial() {
+	public int getPixyYSerial() {
+		serialPort.flush();
+		
 		serialPort.writeString("1");
-
-		Timer timer2 = new Timer();
-
-		TimerTask task = new TimerTask() {
-			public void run() {
-				if(serialPort.getBytesReceived() != 0) {
-					distance = UltrasonicSerialRead();
-					timer2.cancel();
-				}
+		
+		while(true) {
+			if(serialPort.getBytesReceived() != 0) {
+				pixyY = PixyYSerialRead();
+				break;
 			}
-		};
-
-		timer2.schedule(task, 50);
+			timer.delay(50 / 1000);
+		}
 		
 		serialPort.flush();
 		
-		return distance;
+		return pixyY;
 	}
 
-	private int UltrasonicSerialRead() {
-		distance = -1;
+	private int PixyYSerialRead() {
+		pixyY = -1;
 		
 		int startIndex = -1;
 		int endIndex = -1;
@@ -59,34 +57,34 @@ public class ArduinoRead {
 			}
 		}
 
-		// System.out.println(in + " " + startIndex + " " + endIndex);
-
 		if (startIndex != endIndex && startIndex != -1 && startIndex < endIndex && (startIndex + 1) != endIndex) {
 			in = in.substring(startIndex + 1, endIndex);
 
-			distance = Integer.parseInt(in);
+			try {
+				pixyY = Integer.parseInt(in);
+			}
+			catch (NumberFormatException e) {
+				pixyY = -1;
+			}
 		} else {
-			distance = -1;
+			pixyY = -1;
 		}
 		
-		return distance;
+		return pixyY;
 	}
 	
 	public int getPixyXSerial() {
+		serialPort.flush();
+		
 		serialPort.writeString("2");
 
-		Timer timer2 = new Timer();
-
-		TimerTask task = new TimerTask() {
-			public void run() {
-				if(serialPort.getBytesReceived() != 0) {
-					pixyX = PixyXSerialRead();
-					timer2.cancel();
-				}
+		while(true) {
+			if(serialPort.getBytesReceived() != 0) {
+				pixyX = PixyXSerialRead();
+				break;
 			}
-		};
-
-		timer2.schedule(task, 50);
+			timer.delay(50 / 1000);
+		}
 		
 		serialPort.flush();
 		
@@ -98,7 +96,7 @@ public class ArduinoRead {
 		
 		int startIndex = -1;
 		int endIndex = -1;
-
+		
 		String in = "";
 		
 		in = serialPort.readString();
@@ -113,12 +111,18 @@ public class ArduinoRead {
 			}
 		}
 
-		// System.out.println(in + " " + startIndex + " " + endIndex);
-
 		if (startIndex != endIndex && startIndex != -1 && startIndex < endIndex && (startIndex + 1) != endIndex) {
+			
 			in = in.substring(startIndex + 1, endIndex);
-
-			pixyX = Integer.parseInt(in);
+			
+			try {
+				pixyX = Integer.parseInt(in);
+			}
+			catch (NumberFormatException e) {
+				pixyX = -1;
+			}
+			
+			//in = in.substring(startIndex + 1, endIndex);
 		} else {
 			pixyX = -1;
 		}

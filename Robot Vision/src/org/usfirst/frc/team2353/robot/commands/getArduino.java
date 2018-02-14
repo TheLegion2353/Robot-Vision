@@ -29,8 +29,8 @@ public class getArduino extends Command {
 			if (isPressed == false) {
 				isPressed = true;
 
-				int dist = arduino.getUltrasonicSerial();
-				System.out.println("Distance: " + dist);
+				int yVal = arduino.getPixyYSerial();
+				System.out.println("Y: " + yVal);
 			}
 		}
     	else if (OI.xboxController.getRawButton(OI.BButtonNum) == true) {

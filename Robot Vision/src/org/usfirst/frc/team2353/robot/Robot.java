@@ -34,9 +34,9 @@ public class Robot extends TimedRobot {
 	public static Arduino arduino;
 	public static BallTrack ballTrack;
 	
-	boolean arduinoPluggedIn = false;
+	boolean arduinoPluggedIn = true;
 	
-	boolean pixyTrack = false;
+	boolean pixyTrack = true;
 
 	Command m_autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
