@@ -51,7 +51,12 @@ void loop()
         if(countNotFound >= 1000) {
           countNotFound = 0;
           lastRead = 0;
-          Serial.println("/-1/");
+          if(lastRead == 50) {
+            Serial.println("/-1/");
+          }
+          else {
+            Serial.println("-1.");
+          }
         }
     }
   }
